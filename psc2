@@ -1,0 +1,72 @@
+import java.sql.*;
+
+public class FilmTrackrDAO {
+    public static void addFilm(FilmTrackr filme) throws SQLException {
+        String sql = "INSERT INTO Filmes (id, titulo, diretor, anoLancamento, genero, duracao, idioma, paisOrigem, assistido, avaliacao) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, filme.getId());
+            stmt.setString(2, filme.getTitulo());
+            stmt.setString(3, filme.getDiretor());
+            stmt.setInt(4, filme.getAnoLancamento());
+            stmt.setString(5, filme.getGenero());
+            stmt.setDouble(6, filme.getDuracao());
+            stmt.setString(7, filme.getIdioma());
+            stmt.setString(8, filme.getPaisOrigem());
+            stmt.setBoolean(9, filme.isAssistido());
+            stmt.setDouble(10, filme.getAvaliacao());
+            stmt.executeUpdate();
+        }
+    }
+
+    public static void deleteFilm(int id) throws SQLException {
+        String sql = "DELETE FROM Filmes WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        }
+    }
+
+    public static FilmTrackr getFilmById(int id) throws SQLException {
+        String sql = "SELECT * FROM Filmes WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new FilmTrackr(
+                        rs.getInt("id"),
+                        rs.getString("titulo"),
+                        rs.getString("diretor"),
+                        rs.getInt("anoLancamento"),
+                        rs.getString("genero"),
+                        rs.getDouble("duracao"),
+                        rs.getString("idioma"),
+                        rs.getString("paisOrigem"),
+                        rs.getBoolean("assistido"),
+                        rs.getDouble("avaliacao")
+                );
+            }
+        }
+        return null;
+    }
+
+    public static void updateFilm(FilmTrackr filme) throws SQLException {
+        String sql = "UPDATE Filmes SET titulo = ?, diretor = ?, anoLancamento = ?, genero = ?, duracao = ?, idioma = ?, paisOrigem = ?, assistido = ?, avaliacao = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, filme.getTitulo());
+            stmt.setString(2, filme.getDiretor());
+            stmt.setInt(3, filme.getAnoLancamento());
+            stmt.setString(4, filme.getGenero());
+            stmt.setDouble(5, filme.getDuracao());
+            stmt.setString(6, filme.getIdioma());
+            stmt.setString(7, filme.getPaisOrigem());
+            stmt.setBoolean(8, filme.isAssistido());
+            stmt.setDouble(9, filme.getAvaliacao());
+            stmt.setInt(10, filme.getId());
+            stmt.executeUpdate();
+        }
+    }
+}
